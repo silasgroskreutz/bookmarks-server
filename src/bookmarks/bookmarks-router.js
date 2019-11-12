@@ -51,7 +51,13 @@ bookmarksRouter
   
       const bookmark = { id: uuid(), title, url, description, rating }
   
-      store.bookmarks.push(bookmark)
+      //removing store as we now using db pt16
+      // store.bookmarks.push(bookmark)
+
+      BookmarksService.insertBookmark(
+        req.app.get('db'),
+        newBookmark
+      )
   
       logger.info(`Bookmark with id ${bookmark.id} created`)
       res
@@ -82,10 +88,15 @@ bookmarksRouter
     // res.json(bookmark)
   })
   // Step 5 from lesson
-  .delete((req, res) => {
+  .delete((req, res, next) => {
     const { bookmark_id } = req.params
 
-    const bookmarkIndex = store.bookmarks.findIndex(b => b.id === bookmark_id)
+    //const bookmarkIndex = store.bookmarks.findIndex(b => b.id === bookmark_id)
+
+    BookmarksService.deleteBookmark(
+      req.app.get('db'),
+      bookmark_id
+    )
 
     if (bookmarkIndex === -1) {
       logger.error(`Bookmark with id ${bookmark_id} not found.`)
